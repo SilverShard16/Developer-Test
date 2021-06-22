@@ -1,0 +1,30 @@
+[
+	{
+		"Id": 1,
+		"DiscountCode": "SAVETWENTY20",
+		"DiscountValue": "20%",
+		"ValidFrom": "2021-06-20",
+		"ValidTo": "2021-07-20"
+	},
+	{
+		"Id": 2,
+		"DiscountCode": "TENNEROFF",
+		"DiscountValue": "10",
+		"ValidFrom": "2021-06-20",
+		"ValidTo": "2021-08-10"
+	},
+	{
+		"Id": 3,
+		"DiscountCode": "SPRINGCLEANTENNER",
+		"DiscountValue": "10",
+		"ValidFrom": "2021-04-20",
+		"ValidTo": "2021-06-20"
+	},
+	{
+		"Id": 4,
+		"DiscountCode": "XMASTWENTY",
+		"DiscountValue": "20",
+		"ValidFrom": "2021-12-01",
+		"ValidTo": "2021-12-31"
+	}
+]

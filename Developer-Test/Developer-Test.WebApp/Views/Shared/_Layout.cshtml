@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Developer_Test.WebApp</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    <style>
+        .basketContainer {
+            position: relative;
+            margin-top: -43px;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+
+        .box {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: -150px;
+            width: 250px;
+            height: auto;
+            border: solid;
+            border-width:3px;
+            border-radius:10px;
+            border-color:gray;
+            background-color:white;
+        }
+
+        .stack-top {
+            z-index: 9;
+            margin-top: 40px;
+            margin-right: 50px;
+            float:left;
+        }
+    </style>
+</head>
+<body>
+    @{ 
+        int itemIdInBasket = 1;
+    }
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">288 Developer Test</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="basketContainer" style="float:right;">
+            <button id="basketButton" class="btn btn-success" onclick="toggleBasket()">Cart - £0.00</button>
+            <div id="basketOverlay" class="box stack-top" hidden>
+                <div id="basketDiv">
+                    <p id="emptyBasket">Your cart is empty</p>
+                </div>
+                <div>
+                    <p id="subtotalCost">Subtotal - £0.00</p>
+                </div>
+                <div>
+                    <form id="discountForm">
+                        <input id="discountCodeInput" style="width:50%;float:left;margin-left:5px;" type="text" placeholder="Discount Code" value="" />
+                        <input type="button" class="btn btn-success" style="width:30%;height:50%;float:right;margin-bottom:5px;margin-right:5px;font-size:11px;" onclick="applyCoupon()" value="Apply" />
+                    </form>
+                </div>
+                <div id="discountAppliedDiv" hidden>
+                    <p>Discount Applied</p>
+                    <p id="discountDetails">(Somecoupon) -£0.00</p>
+                </div>
+                <br />
+                <br />
+                <div style="width:100%;">
+                    <p id="totalCost">Total - £0.00</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; 2021 - Developer_Test.WebApp</p>
+        </footer>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        function toggleBasket() {
+            var currentHiddenStatus = document.getElementById("basketOverlay").hidden;
+
+            document.getElementById("basketOverlay").hidden = !currentHiddenStatus;
+        }
+    </script>
+
+    <script>
+        function addToBasket(name, price) {
+
+            var buttonState = document.getElementById("basketButton").innerHTML;
+            var subtotalElement = document.getElementById("subtotalCost").innerHTML;
+            var totalElement = document.getElementById("totalCost").innerHTML;
+
+            var subtotalAmount = parseFloat(subtotalElement.substring(subtotalElement.indexOf("£") + 1));
+            var totalAmount = parseFloat(totalElement.substring(totalElement.indexOf("£") + 1));
+
+            var currentBasketTotal = parseFloat(buttonState.substring(buttonState.indexOf("£") + 1));
+
+            currentBasketTotal = currentBasketTotal + parseFloat(price);
+
+            document.getElementById("basketButton").innerHTML = "Cart - £" + currentBasketTotal.toFixed(2);
+            document.getElementById("subtotalCost").innerHTML = "Subtotal - £" + currentBasketTotal.toFixed(2);
+            if (subtotalAmount != totalAmount) {
+                applyCoupon();
+            } else {
+                document.getElementById("totalCost").innerHTML = "Total - £" + currentBasketTotal.toFixed(2);
+            }
+
+            var divChild = document.createElement("div");
+            divChild.id = "basketItem_" + @itemIdInBasket;
+            var pTag = document.createElement("p");
+            pTag.innerHTML = name + " - £" + price;
+            pTag.style = "float:left;width:55%;";
+            var removeButton = document.createElement("button");
+            removeButton.classList.add("btn");
+            removeButton.classList.add("btn-danger");
+            removeButton.innerHTML = "Remove";
+            removeButton.onclick = function () {
+
+                document.getElementById("basketDiv").removeChild(divChild);
+
+                var buttonState = document.getElementById("basketButton").innerHTML;
+                var subtotalElement = document.getElementById("subtotalCost").innerHTML;
+                var totalElement = document.getElementById("totalCost").innerHTML;
+
+                var subtotalAmount = parseFloat(subtotalElement.substring(subtotalElement.indexOf("£") + 1));
+                var totalAmount = parseFloat(totalElement.substring(totalElement.indexOf("£") + 1));
+
+                var currentBasketTotal = parseFloat(buttonState.substring(buttonState.indexOf("£") + 1));
+
+                currentBasketTotal = currentBasketTotal - parseFloat(price);
+
+                document.getElementById("basketButton").innerHTML = "Cart - £" + currentBasketTotal.toFixed(2);
+                document.getElementById("subtotalCost").innerHTML = "Subtotal - £" + currentBasketTotal.toFixed(2);
+                if (subtotalAmount != totalAmount) {
+                    applyCoupon();
+                } else {
+                    document.getElementById("totalCost").innerHTML = "Total - £" + currentBasketTotal.toFixed(2);
+                }
+
+                console.log(document.getElementById("basketDiv").childNodes);
+
+                if (document.getElementById("basketDiv").childNodes.length <= 3) {
+                    document.getElementById("emptyBasket").hidden = false;
+                }
+            };
+
+            divChild.appendChild(pTag);
+            divChild.appendChild(removeButton);
+
+            document.getElementById("basketDiv").appendChild(divChild);
+            document.getElementById("emptyBasket").hidden = true;
+        }
+    </script>
+
+    <script>
+        function applyCoupon() {
+
+            var couponCode = document.getElementById("discountCodeInput").value;
+
+            var buttonState = document.getElementById("basketButton").innerHTML;
+
+            var basketTotal = parseFloat(buttonState.substring(buttonState.indexOf("£") + 1));
+
+            $.get("/Home/CouponSubmitted", { couponCode: couponCode, basketTotal: basketTotal }, function (data) {
+                if (data.toFixed(2) < basketTotal.toFixed(2)) {
+                    var difference = basketTotal - data;
+                    document.getElementById("discountDetails").innerHTML = "(" + couponCode.toUpperCase() + ") -£" + difference.toFixed(2);
+                    document.getElementById("discountAppliedDiv").hidden = false;
+                    document.getElementById("totalCost").innerHTML = "Total - £" + data.toFixed(2);
+                }
+            });
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

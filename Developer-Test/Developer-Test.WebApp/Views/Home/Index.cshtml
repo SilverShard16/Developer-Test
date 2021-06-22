@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+
+    List<Developer_Test.WebApp.Models.Item> items = new List<Item>()
+    {
+        new Item
+        {
+            Id = 1,
+            Name = "Apple",
+            Price = 1.48,
+            ImageLink = "https://static.libertyprim.com/files/varietes/pomme-topaz-large.jpg?1569322124"
+        },
+        new Item
+        {
+            Id = 2,
+            Name = "Orange",
+            Price = 2.77,
+            ImageLink = "https://pbs.twimg.com/profile_images/1176240030559408135/3Rng9SPc.jpg"
+        },
+        new Item
+        {
+            Id = 3,
+            Name = "Pear",
+            Price = 1.99,
+            ImageLink = "https://westonfruitsales.co.uk/app/uploads/2021/02/Pear-conference-1.jpg"
+        },
+        new Item
+        {
+            Id = 4,
+            Name = "Strawberry",
+            Price = 4.52,
+            ImageLink = "https://www.premiumvape.se/wp-content/uploads/produkter/flavor-west/strawberry-flavor-west-concentrate.jpg"
+        }
+    };
+}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<div>
+    <br />
+    <br />
+</div>
+<div class="row">
+
+    @foreach (var item in items)
+    {
+        <div class="col-md-3" style="border:solid;border-width:2px;border-radius:20px;margin-right:2%;margin-bottom:2%;">
+            <h2 style="text-align:center;">@item.Name</h2>
+            <img style="width:100px;height:100px;margin-left:30%;" src="@item.ImageLink" />
+            <br />
+            <h3 style="text-align:center;">£@item.Price</h3>
+            <br />
+            <button class="btn btn-info" style="margin-left:30%;" onclick="addToBasket('@item.Name', @item.Price)">Add To Cart +</button>
+        </div>
+    }
+</div>
+
+<script>
+    function addToBasket(name, price) {
+
+        var buttonState = document.getElementById("basketButton").innerHTML
+
+        var currentBasketTotal = parseFloat(buttonState.substring(buttonState.indexOf("£") + 1));
+
+        currentBasketTotal = currentBasketTotal + parseFloat(price);
+
+        document.getElementById("basketButton").innerHTML = "Cart - £" + currentBasketTotal.toFixed(2);
+
+        var divChild = document.createElement("div");
+        var pTag = document.createElement("p");
+        pTag.innerHTML = name + " - " + price;
+        pTag.style = "float:left;margin-right:45%;";
+        var removeButton = document.createElement("button");
+        removeButton.classList.add("btn");
+        removeButton.classList.add("btn-danger");
+        removeButton.innerHTML = "Remove";
+
+        divChild.appendChild(pTag);
+        divChild.appendChild(removeButton);
+
+        document.getElementById("basketOverlay").appendChild(divChild);
+    }
+</script>
